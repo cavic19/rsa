@@ -18,6 +18,9 @@ def RSA_keys():
     while True:
         # PRobably not save
         e = randint(1, phi_n - 1)
+        # d is inverse of e because we know gdc is equal to 1 that means that 
+        # S * phi_n + d * e = 1
+        # d * e = 1 mod phi_n
         gcd, _, d = eea(phi_n, e)
         # d must be greater than 0, because the eea doesn't handle well negative exponents
         if gcd == 1 and d > 0:
@@ -25,8 +28,6 @@ def RSA_keys():
     K_pub = n, e
     K_private = n, d 
     return K_private, K_pub
-
-
 
 
 def encode(text: str, K_pub: Tuple[int, int]) -> int: 
@@ -37,15 +38,11 @@ def encode(text: str, K_pub: Tuple[int, int]) -> int:
     return encoded
 
 
-
-
 def decode(encoded: int, K_pr: Tuple[int, int]) -> str:
     """Decodes the text using the private key. Private key is in format [n, d]"""
     n, d = K_pr
     decoded = exp(encoded, d, n)
     return int_to_text(decoded)
-
-
 
 
 def exp(num: int, exp: int, mod: Optional[int] = None) -> int: 
@@ -76,8 +73,6 @@ def exp(num: int, exp: int, mod: Optional[int] = None) -> int:
         return temp
 
 
-
-
 def bits(num: int) -> list[bool]:
     """Returns list that contains all the bits that represent the num. First is the most significant bit, and the last is the least significant bit"""
     reversed_out = []
@@ -85,20 +80,6 @@ def bits(num: int) -> list[bool]:
         reversed_out.append((num & 1) == 1)
         num >>= 1
     return list(reversed(reversed_out))
-
-
-
-def modulo_inverse(a: int, mod: int) -> Optional[int]:
-    """Calculates inverse a modulo mod if exists, otherwise return None"""
-    d, _, T = eea(mod, a)
-    if (d != 1):
-        return None
-    else:
-        # Because a * a^-1 = 1
-        # S * mod + T * n = 1
-        # 0 + T * a = 1 mod n 
-        # T * a = 1 mod n => a^-1 = T
-        return T
     
 
 def eea(a: int, b: int, S_i: int = 0, S_i_min: int = 1, T_i: int = 1, T_i_min: int = 0) -> Tuple[int, int, int]: 
@@ -130,32 +111,10 @@ def eea(a: int, b: int, S_i: int = 0, S_i_min: int = 1, T_i: int = 1, T_i_min: i
         return eea(r_i, r_i_plus, S_i = S_i_plus, S_i_min = S_i, T_i = T_i_plus, T_i_min = T_i)
     
 
-def ea(a: int, b: int) -> int: 
-    """Euclidean algorithm"""
-    if (a == 0):
-        return b
-    if (b == 0):
-        return a
-
-    lower = min(a, b)
-    greater = max(a, b)
-    
-    remainder = greater % lower 
-    if (remainder == 0):
-        return lower
-    else:
-        return ea(remainder, lower)
-
-def toString(int: int) -> str:
-    if (int < 0):
-        return f"({int})"
-    else:
-        return str(int)
-    
-
 def text_to_int(text: str) -> int: 
     binary_representation = ''.join(format(ord(ch), "08b") for ch in text)
     return int(binary_representation, 2)
+
 
 def int_to_text(binary_integer: int) -> str:
     # Convert the integer to a binary string (remove the '0b' prefix)
@@ -169,8 +128,6 @@ def int_to_text(binary_integer: int) -> str:
     
     # Join the characters into a string
     return ''.join(chars)
-
-
 
 
 if (__name__ == "__main__"):
