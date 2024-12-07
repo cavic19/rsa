@@ -15,3 +15,6 @@
     * Decode: $y^d \mod n$
     * Since $e$ and $d$ are both large numbers we have to employes a fast exponentiation algorithm (TODO: support negative exponents)
     * Limitation on the size of the x! That means that this canno't be used to encoding larger messages (in theory it can by dividing the message in block, but that's not used in practice. In practices the RSA is used to encode a symetric key of a block cypher, and the data is then encoded using that)
+
+## TODO
+* Generate correct size prime numbers
